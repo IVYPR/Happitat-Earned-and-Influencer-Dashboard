@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Happitat: Media Activity & Ticket Sales</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background-color: #f8f7f4;
+      color: #1a1a1a;
+      line-height: 1.6;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+    
+    header {
+      margin-bottom: 2rem;
+    }
+    
+    h1 {
+      font-size: 24px;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      color: #1a1a1a;
+    }
+    
+    .subtitle {
+      font-size: 13px;
+      color: #888;
+    }
+    
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      margin-bottom: 2rem;
+    }
+    
+    .metric-card {
+      background: #fff;
+      padding: 12px;
+      border-radius: 8px;
+      border: 0.5px solid #ddd;
+    }
+    
+    .metric-label {
+      font-size: 12px;
+      color: #888;
+      margin-bottom: 4px;
+      font-weight: 400;
+    }
+    
+    .metric-value {
+      font-size: 20px;
+      font-weight: 500;
+      color: #1a1a1a;
+    }
+    
+    .panel {
+      background: #fff;
+      border: 0.5px solid #ddd;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 2rem;
+    }
+    
+    .panel h2 {
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 1rem;
+      color: #1a1a1a;
+    }
+    
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 1rem;
+      font-size: 12px;
+      color: #888;
+    }
+    
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    .legend-box {
+      width: 8px;
+      height: 8px;
+      border-radius: 1px;
+    }
+    
+    .chart-wrapper {
+      position: relative;
+      width: 100%;
+      height: 280px;
+    }
+    
+    .overview {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    
+    .overview-section h3 {
+      font-size: 12px;
+      color: #888;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+    
+    .overview-item {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+    
+    .overview-label {
+      color: #888;
+    }
+    
+    .overview-value {
+      color: #1a1a1a;
+      font-weight: 500;
+    }
+    
+    @media (max-width: 768px) {
+      .metrics {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .overview {
+        grid-template-columns: 1fr;
+      }
+      
+      .container {
+        padding: 1.5rem 1rem;
+      }
+      
+      h1 {
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Happitat: media activity & ticket sales</h1>
+      <p class="subtitle">Nov 10 25 — Apr 20 26 | Weekly performance</p>
+    </header>
+    
+    <div class="metrics">
+      <div class="metric-card">
+        <div class="metric-label">Total ticket revenue</div>
+        <div class="metric-value">$632k</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Total transactions</div>
+        <div class="metric-value">1,783</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Avg revenue/week</div>
+        <div class="metric-value">$26.3k</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Avg trans/week</div>
+        <div class="metric-value">74</div>
+      </div>
+    </div>
+    
+    <div class="panel">
+      <h2>Earned media & influencer reach</h2>
+      <div class="legend">
+        <span class="legend-item"><span class="legend-box" style="background: #B5ADC9;"></span>Earned media reach</span>
+        <span class="legend-item"><span class="legend-box" style="background: #9B4DDD;"></span>Influencer reach</span>
+        <span class="legend-item"><span class="legend-box" style="background: #1F7E5E;"></span>Ticket revenue</span>
+      </div>
+      <div class="chart-wrapper">
+        <canvas id="earnedChart"></canvas>
+      </div>
+    </div>
+    
+    <div class="panel">
+      <h2>Paid media activity</h2>
+      <div class="legend">
+        <span class="legend-item"><span class="legend-box" style="background: #4B7FBD;"></span>Website sessions</span>
+        <span class="legend-item"><span class="legend-box" style="background: #D4886A;"></span>Cost per order</span>
+        <span class="legend-item"><span class="legend-box" style="background: #2E5C4A;"></span>Ticket revenue</span>
+      </div>
+      <div class="chart-wrapper">
+        <canvas id="paidChart"></canvas>
+      </div>
+    </div>
+    
+    <div class="panel">
+      <h2>Campaign overview</h2>
+      <div class="overview">
+        <div class="overview-section">
+          <h3>Earned media</h3>
+          <div class="overview-item">
+            <span class="overview-label">Total reach</span>
+            <span class="overview-value">18.2M</span>
+          </div>
+          <div class="overview-item">
+            <span class="overview-label">Peak week</span>
+            <span class="overview-value">Dec 15–22</span>
+          </div>
+          <div class="overview-item">
+            <span class="overview-label">Peak week revenue</span>
+            <span class="overview-value">$41.5k</span>
+          </div>
+        </div>
+        <div class="overview-section">
+          <h3>Paid media</h3>
+          <div class="overview-item">
+            <span class="overview-label">Total sessions</span>
+            <span class="overview-value">328k</span>
+          </div>
+          <div class="overview-item">
+            <span class="overview-label">Peak week</span>
+            <span class="overview-value">Jan 5–12</span>
+          </div>
+          <div class="overview-item">
+            <span class="overview-label">Peak week revenue</span>
+            <span class="overview-value">$43.6k</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const weeks = [
+      'Nov 10', 'Nov 17', 'Nov 24', 'Dec 1', 'Dec 8', 'Dec 15', 'Dec 22', 'Dec 29',
+      'Jan 5', 'Jan 12', 'Jan 19', 'Jan 26', 'Feb 2', 'Feb 9', 'Feb 16', 'Feb 23',
+      'Mar 2', 'Mar 9', 'Mar 16', 'Mar 23', 'Mar 30', 'Apr 6', 'Apr 13', 'Apr 20'
+    ];
+
+    const ticketRevenue = [
+      3515, 4584, 3695, 6478, 11311, 17160, 41463, 16824,
+      41820, 38095, 37587, 43580, 34161, 19258, 28285, 26432,
+      18764, 19984, 16348, 25963, 37345, 34911, 25166, 17667
+    ];
+
+    const earnedMediaReach = [
+      280000, 420000, 350000, 480000, 650000, 920000, 1100000, 750000,
+      880000, 720000, 640000, 810000, 580000, 420000, 520000, 480000,
+      350000, 280000, 310000, 420000, 680000, 550000, 380000, 290000
+    ];
+
+    const influencerReach = [
+      0, 0, 150000, 0, 280000, 180000, 420000, 0,
+      650000, 0, 320000, 580000, 0, 220000, 0, 0,
+      0, 0, 0, 180000, 0, 240000, 0, 0
+    ];
+
+    const websiteSessions = [
+      6039, 8362, 26986, 6146, 13698, 13566, 22084, 24635,
+      33361, 26227, 16044, 14227, 17327, 14176, 14239, 16892,
+      8459, 3400, 3710, 6610, 11915, 8789, 6710, 6516
+    ];
+
+    const costPerOrder = [
+      543.74, 546.89, 188.21, 274.66, 294.10, 240.97, 253.73, 309.25,
+      113.78, 132.70, 145.28, 98.37, 138.28, 112.76, 198.20, 183.20,
+      164.04, 21.07, 24.46, 58.69, 58.15, 32.45, 31.44, 10.55
+    ];
+
+    const commonOptions = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: {
+          grid: { color: 'rgba(0,0,0,0.04)', drawBorder: false },
+          ticks: { color: '#888', font: { size: 9 }, autoSkip: true, maxRotation: 0 }
+        }
+      }
+    };
+
+    // EARNED MEDIA CHART
+    const ctx1 = document.getElementById('earnedChart').getContext('2d');
+    new Chart(ctx1, {
+      type: 'bar',
+      data: {
+        labels: weeks,
+        datasets: [
+          {
+            label: 'Earned media reach',
+            data: earnedMediaReach,
+            backgroundColor: '#B5ADC9',
+            yAxisID: 'y',
+            borderRadius: 0,
+            barThickness: 3,
+            categoryPercentage: 0.75,
+            barPercentage: 0.5,
+            order: 3
+          },
+          {
+            label: 'Influencer reach',
+            data: influencerReach,
+            backgroundColor: '#9B4DDD',
+            yAxisID: 'y',
+            borderRadius: 0,
+            barThickness: 3,
+            categoryPercentage: 0.75,
+            barPercentage: 1,
+            order: 3
+          },
+          {
+            label: 'Ticket revenue',
+            data: ticketRevenue,
+            borderColor: '#1F7E5E',
+            backgroundColor: 'transparent',
+            borderWidth: 2,
+            yAxisID: 'y1',
+            type: 'line',
+            fill: false,
+            tension: 0.3,
+            pointRadius: 2.5,
+            pointBackgroundColor: '#1F7E5E',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 1,
+            order: 1
+          }
+        ]
+      },
+      options: {
+        ...commonOptions,
+        scales: {
+          ...commonOptions.scales,
+          y: {
+            position: 'left',
+            title: { display: true, text: 'Reach', color: '#888', font: { size: 10, weight: '400' } },
+            ticks: { color: '#888', font: { size: 9 }, callback: function(v) { return Math.round(v / 100000) + '00k'; } },
+            grid: { color: 'rgba(0,0,0,0.04)', drawBorder: false }
+          },
+          y1: {
+            position: 'right',
+            title: { display: true, text: 'Revenue', color: '#888', font: { size: 10, weight: '400' } },
+            ticks: { color: '#888', font: { size: 9 }, callback: function(v) { return '$' + Math.round(v / 1000) + 'k'; } },
+            grid: { display: false }
+          }
+        }
+      }
+    });
+
+    // PAID MEDIA CHART
+    const ctx2 = document.getElementById('paidChart').getContext('2d');
+    new Chart(ctx2, {
+      type: 'bar',
+      data: {
+        labels: weeks,
+        datasets: [
+          {
+            label: 'Website sessions',
+            data: websiteSessions,
+            backgroundColor: '#4B7FBD',
+            yAxisID: 'y',
+            borderRadius: 0,
+            barThickness: 3,
+            categoryPercentage: 0.75,
+            barPercentage: 0.6,
+            order: 3
+          },
+          {
+            label: 'Cost per order',
+            data: costPerOrder,
+            backgroundColor: '#D4886A',
+            yAxisID: 'y2',
+            borderRadius: 0,
+            barThickness: 3,
+            categoryPercentage: 0.75,
+            barPercentage: 1,
+            order: 3
+          },
+          {
+            label: 'Ticket revenue',
+            data: ticketRevenue,
+            borderColor: '#2E5C4A',
+            backgroundColor: 'transparent',
+            borderWidth: 2,
+            yAxisID: 'y1',
+            type: 'line',
+            fill: false,
+            tension: 0.3,
+            pointRadius: 2.5,
+            pointBackgroundColor: '#2E5C4A',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 1,
+            order: 1
+          }
+        ]
+      },
+      options: {
+        ...commonOptions,
+        scales: {
+          ...commonOptions.scales,
+          y: {
+            position: 'left',
+            title: { display: true, text: 'Sessions', color: '#888', font: { size: 10, weight: '400' } },
+            ticks: { color: '#888', font: { size: 9 }, callback: function(v) { return Math.round(v / 1000) + 'k'; } },
+            grid: { color: 'rgba(0,0,0,0.04)', drawBorder: false }
+          },
+          y1: {
+            position: 'right',
+            title: { display: true, text: 'Revenue', color: '#888', font: { size: 10, weight: '400' } },
+            ticks: { color: '#888', font: { size: 9 }, callback: function(v) { return '$' + Math.round(v / 1000) + 'k'; } },
+            grid: { display: false }
+          },
+          y2: {
+            position: 'right',
+            offset: true,
+            title: { display: true, text: 'Cost per order', color: '#888', font: { size: 10, weight: '400' } },
+            ticks: { color: '#888', font: { size: 9 }, callback: function(v) { return '$' + Math.round(v); } },
+            grid: { display: false }
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>
